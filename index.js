@@ -170,11 +170,10 @@ async function tryAutoJoinNemesisMembers({ postThread, guild }) {
 // ===== MAIN =====
 client.on("messageCreate", async (message) => {
   console.log(
-    "[DBG]",
-    "channel=", message.channelId,
-    "author=", message.author?.id,
-    "embeds=", message.embeds?.length ?? 0,
-    "contentPreview=", (message.content || "").slice(0, 50)
+    "[MSG]",
+    "channel:", message.channelId,
+    "author:", message.author?.id,
+    "embeds:", message.embeds?.length ?? 0
   );
   try {
     if (message.author.id === client.user.id) return;
@@ -188,7 +187,6 @@ client.on("messageCreate", async (message) => {
 
     const title = extractEventTitle(message);
 
-    // ✅ FIX: define unixSeconds
     const unixSeconds = extractUnixSecondsFromTLGM(message);
     const whenText = formatDiscordTimestamp(unixSeconds);
 
@@ -235,7 +233,8 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-client.once("ready", async () => {
-  console.log(`Logged in as ${client.user.tag}`);
-  console.log(`Watching TLGM channel: ${EVENTS_CHANNEL_ID || "(not set)"}`);
+client.once("ready", () => {
+  console.log("✅ BOT READY");
+  console.log("User:", client.user.tag);
+  console.log("Events channel:", process.env.EVENTS_CHANNEL_ID);
 });
