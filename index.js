@@ -251,3 +251,10 @@ client.once("ready", () => {
   console.log("User:", client.user.tag);
   console.log("Events channel:", process.env.EVENTS_CHANNEL_ID);
 });
+
+console.log("➡️ Logging in...");
+
+client.login(process.env.DISCORD_TOKEN).catch((err) => {
+  console.error("❌ login failed:", err);
+  process.exit(1);
+});
