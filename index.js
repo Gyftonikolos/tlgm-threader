@@ -9,6 +9,19 @@ const {
 const AUTO_JOIN_NEMESIS_MEMBERS =
   String(process.env.AUTO_JOIN_NEMESIS_MEMBERS ?? "false").toLowerCase() === "true";
 
+process.on("uncaughtException", (err) => {
+  console.error("❌ uncaughtException:", err);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("❌ unhandledRejection:", reason);
+});
+
+console.log("🚀 Booting...");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("Has DISCORD_TOKEN:", !!process.env.DISCORD_TOKEN);
+console.log("DISCORD_TOKEN length:", (process.env.DISCORD_TOKEN || "").length);
+console.log("FORUM_CHANNEL_ID:", process.env.FORUM_CHANNEL_ID);
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
