@@ -192,7 +192,9 @@ client.on("messageCreate", async (message) => {
     if (message.author.id === client.user.id) return;
 
     if (EVENTS_CHANNEL_ID && message.channelId !== EVENTS_CHANNEL_ID) return;
-    if (TLGM_BOT_ID && message.author.id !== TLGM_BOT_ID) return;
+    const ALLOWED_AUTHOR_IDS = new Set([TLGM_BOT_ID, "YOUR_DISCORD_USER_ID"].filter(Boolean));
+    if (ALLOWED_AUTHOR_IDS.size && !ALLOWED_AUTHOR_IDS.has(message.author.id)) return;
+
     if (!message.embeds || message.embeds.length === 0) return;
 
     if (handled.has(message.id)) return;
