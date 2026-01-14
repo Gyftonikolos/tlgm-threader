@@ -238,5 +238,3 @@ client.once("clientReady", async () => {
   console.log(`Auto-archive minutes: ${AUTO_ARCHIVE_MINUTES}`);
   console.log(`Auto-join Nemesis members: ${AUTO_JOIN_NEMESIS_MEMBERS} (max=${AUTO_JOIN_MAX_MEMBERS})`);
 });
-
-client.login(process.env.DISCORD_TOKEN);
