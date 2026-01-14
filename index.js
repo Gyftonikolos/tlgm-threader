@@ -238,10 +238,4 @@ client.on("messageCreate", async (message) => {
 client.once("ready", async () => {
   console.log(`Logged in as ${client.user.tag}`);
   console.log(`Watching TLGM channel: ${EVENTS_CHANNEL_ID || "(not set)"}`);
-  console.log(`TLGM bot id: ${TLGM_BOT_ID || "(not set)"}`);
-  console.log(`Forum channel: ${FORUM_CHANNEL_ID || "(not set)"}`);
-  console.log(`Forum tag id: ${FORUM_EVENT_TAG_ID || "(not set)"}`);
-  console.log(`Ping Nemesis: ${PING_NEMESIS} role=${NEMESIS_ROLE_ID || "(not set)"}`);
-  console.log(`Auto-archive minutes: ${AUTO_ARCHIVE_MINUTES}`);
-  console.log(`Auto-join Nemesis members: ${AUTO_JOIN_NEMESIS_MEMBERS} (max=${AUTO_JOIN_MAX_MEMBERS})`);
 });
