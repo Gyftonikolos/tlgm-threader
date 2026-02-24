@@ -18,6 +18,19 @@ const {
 const AUTO_JOIN_NEMESIS_MEMBERS =
   String(process.env.AUTO_JOIN_NEMESIS_MEMBERS ?? "false").toLowerCase() === "true";
 
+process.on("uncaughtException", (err) => {
+  console.error("❌ uncaughtException:", err);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("❌ unhandledRejection:", reason);
+});
+
+console.log("🚀 Booting...");
+console.log("NODE_ENV:", process.env.NODE_ENV);
+console.log("Has DISCORD_TOKEN:", !!process.env.DISCORD_TOKEN);
+console.log("DISCORD_TOKEN length:", (process.env.DISCORD_TOKEN || "").length);
+console.log("FORUM_CHANNEL_ID:", process.env.FORUM_CHANNEL_ID);
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -178,11 +191,19 @@ async function tryAutoJoinNemesisMembers({ postThread, guild }) {
 
 // ===== MAIN =====
 client.on("messageCreate", async (message) => {
+  console.log(
+    "[MSG]",
+    "channel:", message.channelId,
+    "author:", message.author?.id,
+    "embeds:", message.embeds?.length ?? 0
+  );
   try {
     if (message.author.id === client.user.id) return;
 
     if (EVENTS_CHANNEL_ID && message.channelId !== EVENTS_CHANNEL_ID) return;
-    if (TLGM_BOT_ID && message.author.id !== TLGM_BOT_ID) return;
+    const ALLOWED_AUTHOR_IDS = new Set([TLGM_BOT_ID, "YOUR_DISCORD_USER_ID"].filter(Boolean));
+    if (ALLOWED_AUTHOR_IDS.size && !ALLOWED_AUTHOR_IDS.has(message.author.id)) return;
+
     if (!message.embeds || message.embeds.length === 0) return;
 
     if (handled.has(message.id)) return;
@@ -190,7 +211,6 @@ client.on("messageCreate", async (message) => {
 
     const title = extractEventTitle(message);
 
-    // ✅ FIX: define unixSeconds
     const unixSeconds = extractUnixSecondsFromTLGM(message);
     const whenText = formatDiscordTimestamp(unixSeconds);
 
@@ -237,15 +257,15 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-client.once("clientReady", async () => {
-  console.log(`Logged in as ${client.user.tag}`);
-  console.log(`Watching TLGM channel: ${EVENTS_CHANNEL_ID || "(not set)"}`);
-  console.log(`TLGM bot id: ${TLGM_BOT_ID || "(not set)"}`);
-  console.log(`Forum channel: ${FORUM_CHANNEL_ID || "(not set)"}`);
-  console.log(`Forum tag id: ${FORUM_EVENT_TAG_ID || "(not set)"}`);
-  console.log(`Ping Nemesis: ${PING_NEMESIS} role=${NEMESIS_ROLE_ID || "(not set)"}`);
-  console.log(`Auto-archive minutes: ${AUTO_ARCHIVE_MINUTES}`);
-  console.log(`Auto-join Nemesis members: ${AUTO_JOIN_NEMESIS_MEMBERS} (max=${AUTO_JOIN_MAX_MEMBERS})`);
+client.once("ready", () => {
+  console.log("✅ BOT READY");
+  console.log("User:", client.user.tag);
+  console.log("Events channel:", process.env.EVENTS_CHANNEL_ID);
 });
 
-client.login(process.env.DISCORD_TOKEN);
+console.log("➡️ Logging in...");
+
+client.login(process.env.DISCORD_TOKEN).catch((err) => {
+  console.error("❌ login failed:", err);
+  process.exit(1);
+});
